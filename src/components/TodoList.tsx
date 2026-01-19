@@ -49,7 +49,7 @@ const TodoList = ({ refreshTrigger }: todoListProp) => {
     }
   };
 
-  const deleteTodo = async (
+  const deleteAndSaveTodoToHistory = async (
     e: React.MouseEvent<HTMLOrSVGElement>,
     todoId: string,
   ) => {
@@ -85,9 +85,6 @@ const TodoList = ({ refreshTrigger }: todoListProp) => {
               <div
                 key={index}
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200"
-                onClick={(e) => {
-                  markSuccess(e, todo._id);
-                }}
               >
                 {/* Status Indicator */}
                 <div className="flex items-center">
@@ -97,6 +94,9 @@ const TodoList = ({ refreshTrigger }: todoListProp) => {
                         ? "bg-green-500 border-green-500"
                         : "border-gray-300"
                     }`}
+                    onClick={(e) => {
+                      markSuccess(e, todo._id);
+                    }}
                   >
                     {todo.completed && (
                       <svg
@@ -128,7 +128,7 @@ const TodoList = ({ refreshTrigger }: todoListProp) => {
                 <MdDelete
                   className="text-2xl text-red-700 cursor-pointer"
                   onClick={(e) => {
-                    deleteTodo(e, todo._id);
+                    deleteAndSaveTodoToHistory(e, todo._id);
                   }}
                 />
               </div>
