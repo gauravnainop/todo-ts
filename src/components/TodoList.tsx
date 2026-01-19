@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 
 interface TodoItems {
+  _id: string;
   title: string;
   description: string;
   completed: boolean;
+}
+
+interface todoListProp {
+  refreshTrigger: number;
 }
 
 interface TodoResponse {
@@ -11,10 +16,9 @@ interface TodoResponse {
   todos: TodoItems[];
 }
 
-const TodoList = () => {
+const TodoList = ({ refreshTrigger }: todoListProp) => {
   const [todoData, setTodoData] = useState<TodoResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchTodos = async () => {
       try {
@@ -27,7 +31,22 @@ const TodoList = () => {
       }
     };
     fetchTodos();
-  }, []);
+  }, [refreshTrigger, todoData]);
+
+  const markSuccess = async (
+    e: React.MouseEvent<HTMLDivElement>,
+    todoId: string,
+  ) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`/api/todos/mark_success/${todoId}`, {
+        method: "PATCH",
+      });
+      if (!response.ok) throw new Error("Failed to Mark todos Success");
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
 
   if (error)
     return (
@@ -39,22 +58,24 @@ const TodoList = () => {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl border border-gray-100">
+    <div className="w-[65vw] bg-gray-50 mt-4 px-4  ">
+      <div className=" mx-auto bg-white rounded-xl shadow-md overflow-hidden  border border-gray-100">
         <div className="p-8">
           <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-6">
             My Tasks
           </div>
-
           <div className="space-y-4">
             {todoData?.todos.map((todo, index) => (
               <div
                 key={index}
                 className="flex items-start p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200"
+                onClick={(e) => {
+                  markSuccess(e, todo._id);
+                }}
               >
                 {/* Status Indicator */}
                 <div
-                  className={`mt-1 h-5 w-5 rounded-full border-2 shrink-0 ${
+                  className={`mt-1 h-5 w-5 rounded-full cursor-pointer border-2 shrink-0 ${
                     todo.completed
                       ? "bg-green-500 border-green-500"
                       : "border-gray-300"

@@ -5,8 +5,11 @@ interface IFormInput {
   title: string;
   description: string;
 }
+interface createTodoProps {
+  onTodoCreated: () => void;
+}
 
-const CreateTodo = () => {
+const CreateTodo = ({ onTodoCreated }: createTodoProps) => {
   const {
     register,
     handleSubmit,
@@ -23,11 +26,12 @@ const CreateTodo = () => {
         },
         body: JSON.stringify({ ...data, completed: false }),
       });
+      onTodoCreated();
     } catch (error) {}
   };
 
   return (
-    <div className="min-h-screen flex  flex-col  justify-center p-4">
+    <div className=" flex  flex-col  p-4">
       <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8 ml-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
           Create Todo
