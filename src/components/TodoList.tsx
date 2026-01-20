@@ -8,18 +8,19 @@ interface TodoItems {
   completed: boolean;
 }
 
-interface todoListProp {
-  refreshTrigger: number;
-}
-
 interface TodoResponse {
   success: boolean;
   todos: TodoItems[];
 }
 
-const TodoList = ({ refreshTrigger }: todoListProp) => {
+interface TodoProps {
+  todoCreatedTrigger: number;
+}
+
+const TodoList = ({ todoCreatedTrigger }: TodoProps) => {
   const [todoData, setTodoData] = useState<TodoResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
   useEffect(() => {
     const fetchTodos = async () => {
       try {
@@ -32,7 +33,7 @@ const TodoList = ({ refreshTrigger }: todoListProp) => {
       }
     };
     fetchTodos();
-  }, [refreshTrigger, todoData]);
+  }, [refreshTrigger, todoCreatedTrigger]);
 
   const markSuccess = async (
     e: React.MouseEvent<HTMLDivElement>,
@@ -44,6 +45,7 @@ const TodoList = ({ refreshTrigger }: todoListProp) => {
         method: "PATCH",
       });
       if (!response.ok) throw new Error("Failed to Mark todos Success");
+      setRefreshTrigger(refreshTrigger + 1);
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -59,6 +61,7 @@ const TodoList = ({ refreshTrigger }: todoListProp) => {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to Delete todos");
+      setRefreshTrigger(refreshTrigger + 1);
     } catch (error: any) {
       throw new Error(error.message);
     }
