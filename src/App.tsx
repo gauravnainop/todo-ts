@@ -3,6 +3,7 @@ import CreateTodo from "./components/CreateTodo";
 import Navbar from "./components/Navbar";
 import TodoList from "./components/TodoList";
 
+
 const App = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
